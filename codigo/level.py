@@ -12,6 +12,7 @@ class Level:
     def __init__(self, level_data, superficie):
         self.superficie_visualizacion = superficie
         self.mundo_shift = 0
+        self.x_actual = None
 
        # PL AYER
         mapa_player = importar_csv_layout(level_data['player'])
@@ -72,16 +73,16 @@ class Level:
     def scroll_x(self):
         player = self.player.sprite
         player_x = player.rect.centerx
-        direction_x = player.direction.x
+        direccion_x = player.direction.x
 
-        if player_x < ancho_pantalla / 4 and direction_x < 0:
-            self.world_shift = 8
+        if player_x < ancho_pantalla / 4 and direccion_x < 0:
+            self.mundo_shift = 8
             player.speed = 0
-        elif player_x > ancho_pantalla - (ancho_pantalla / 4) and direction_x > 0:
-            self.world_shift = -8
+        elif player_x > ancho_pantalla - (ancho_pantalla / 4) and direccion_x > 0:
+            self.mundo_shift = -8
             player.speed = 0
         else:
-            self.world_shift = 0
+            self.mundo_shift = 0
             player.speed = 8
 
     def player_setup(self,layout):
@@ -167,6 +168,7 @@ class Level:
         self.player.update()
         self.horizontal_movement_colission()
         self.vertical_movement_colission()
+        self.scroll_x()
         self.player.draw(self.superficie_visualizacion)
 
         pass
