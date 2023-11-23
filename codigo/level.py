@@ -9,7 +9,7 @@ from settings import *
 # level_data: informacion real que nosotros creamos anteriormente en el tilemap
 # superficie: superficie de visualizacion de la ventana
 class Level:
-    def __init__(self, level_data, superficie):
+    def     __init__(self, level_data, superficie):
         self.superficie_visualizacion = superficie
         self.mundo_shift = 0
         self.x_actual = None
@@ -22,20 +22,37 @@ class Level:
         self.goal = pygame.sprite.GroupSingle()
         self.player_setup(mapa_player)
 
+
         # Obtengo el mapa tererno (para asegurarnos de que estamos viendo los grafisoc
         # del terreno (porque las monedas pueden tener el mismo id
+        # LV1
+
+        # mapa_terreno = importar_csv_layout(level_data['terreno'])
+        # self.terreno_sprites = self.crear_grupo_tiles(mapa_terreno, 'terreno')
+        #
+        # mapa_monedas = importar_csv_layout(level_data['monedas'])
+        # self.modenas_sprites = self.crear_grupo_tiles(mapa_monedas,'monedas')
+        #
+        # mapa_enemigo = importar_csv_layout(level_data['enemigo'])
+        # self.enemigo_sprites = self.crear_grupo_tiles(mapa_enemigo,'enemigo')
+
+        mapa_reestricciones = importar_csv_layout(level_data['reestricciones'])
+        self.reestricciones_sprites = self.crear_grupo_tiles(mapa_reestricciones,'reestricciones')
+
+        # LV2
+
         mapa_terreno = importar_csv_layout(level_data['terreno'])
         self.terreno_sprites = self.crear_grupo_tiles(mapa_terreno, 'terreno')
 
         mapa_monedas = importar_csv_layout(level_data['monedas'])
-        self.modenas_sprites = self.crear_grupo_tiles(mapa_monedas,'monedas')
+        self.modenas_sprites = self.crear_grupo_tiles(mapa_monedas, 'monedas')
 
         mapa_enemigo = importar_csv_layout(level_data['enemigo'])
-        self.enemigo_sprites = self.crear_grupo_tiles(mapa_enemigo,'enemigo')
+        self.enemigo_sprites = self.crear_grupo_tiles(mapa_enemigo, 'enemigo')
 
-        # reestricciones
-        mapa_reestricciones = importar_csv_layout(level_data['reestricciones'])
-        self.reestricciones_sprites = self.crear_grupo_tiles(mapa_reestricciones,'reestricciones')
+        # mapa_monedas = importar_csv_layout(level_data['lava'])
+        # self.modenas_sprites = self.crear_grupo_tiles(mapa_monedas, 'lava')
+
 
     # construir un bucle que circuloe a traves de 'mapa terreno'
     def crear_grupo_tiles(self,layout,tipo):
@@ -46,6 +63,19 @@ class Level:
                 if val != '-1':
                     x = columna_index * tiles_tamaño
                     y = fila_index * tiles_tamaño
+
+
+                    # if tipo == 'terreno':
+                    #     lista_mosaicos_terreno = importar_graficos('../graficos/terreno/LV2.png')
+                    #     tile_superficie = lista_mosaicos_terreno[int(val)]
+                    #     sprite = StaticTile(tiles_tamaño,x,y,tile_superficie)
+                    #     grupo_sprites.add(sprite)
+                    #
+                    # if tipo == 'lava':
+                    #     lista_mosaicos_terreno = importar_graficos('../graficos/terreno/LV2.png')
+                    #     tile_superficie = lista_mosaicos_terreno[int(val)]
+                    #     sprite = StaticTile(tiles_tamaño,x,y,tile_superficie)
+                    #     grupo_sprites.add(sprite)
 
                     if tipo == 'terreno':
                         lista_mosaicos_terreno = importar_graficos('../graficos/terreno/fondoTerreno.png')
@@ -69,7 +99,6 @@ class Level:
                     grupo_sprites.add(sprite)
 
         return grupo_sprites
-
     def scroll_x(self):
         player = self.player.sprite
         player_x = player.rect.centerx
@@ -84,7 +113,6 @@ class Level:
         else:
             self.mundo_shift = 0
             player.speed = 8
-
     def player_setup(self,layout):
         for fila_index, fila in enumerate(layout):
             for columna_index, val in enumerate(fila):
@@ -98,11 +126,9 @@ class Level:
                     algo_superficie = pygame.image.load('../graficos/character/inactivo/6.png').convert_alpha()
                     sprite = StaticTile(tiles_tamaño,x,y,algo_superficie)
                     self.goal.add(sprite)
-
     def horizontal_movement_colission(self):
         player = self.player.sprite
         player.rect.x += player.direction.x * player.speed
-        print(player.rect.x)
         for sprite in self.terreno_sprites.sprites():
             if sprite.rect.colliderect(player.rect):
                 if player.direction.x < 0:
@@ -129,7 +155,7 @@ class Level:
                     player.rect.bottom = sprite.rect.top
                     player.direction.y = 0
                     player.en_el_piso = True
-
+    
                     # EN EL TECHO
                 elif player.direction.y < 0:
                     player.rect.top = sprite.rect.bottom
@@ -144,6 +170,13 @@ class Level:
         for enemigo in self.enemigo_sprites.sprites():
             if pygame.sprite.spritecollide(enemigo,self.terreno_sprites,False):
                 enemigo.reversa()
+
+    def moneda_coliision(self):
+        colision_monedas = pygame.sprite.spritecollide(self.player.sprite, self.modenas_sprites, True)
+        contadorMonedas = 0
+        if colision_monedas:
+            contadorMonedas =+1
+        return contadorMonedas
 
     # corre todo el juego, esto es para no csorrer toda la logica
     # del juego en el main
@@ -170,6 +203,6 @@ class Level:
         self.vertical_movement_colission()
         self.scroll_x()
         self.player.draw(self.superficie_visualizacion)
+        self.moneda_coliision()
 
         pass
-

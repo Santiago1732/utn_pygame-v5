@@ -8,10 +8,10 @@ class Player(pygame.sprite.Sprite):
         self.imagen_index = 0
         self.velocidad_animacion = 0.15
         self.image = self.animaciones['inactivo'][self.imagen_index]
-        self.rect = self.image.get_rect(topleft = pos)
+        self.rect = self.image.get_rect(topleft=pos)
 
         # movimiento player
-        self.direction = pygame.math.Vector2(0,0)
+        self.direction = pygame.math.Vector2(0, 0)
         self.speed = 8
         self.gravity = 0.8
         self.jump_speed = -16
@@ -23,6 +23,8 @@ class Player(pygame.sprite.Sprite):
         self.en_el_techo = False
         self.a_la_derecha = False
         self.a_la_izquierda = False
+
+        self.cantidad_monedas = 0
 
     def importar_imagenes(self):
         imagenes_path = '../graficos/character/'
