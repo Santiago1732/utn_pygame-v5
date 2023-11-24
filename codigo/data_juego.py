@@ -5,22 +5,25 @@ level_0 = {
         'enemigo': '../levels/level_0/level_0._enemigo.csv',
         'reestricciones': '../levels/level_0/level_0._reestricciones.csv',
         'player': '../levels/level_0/level_0._player.csv',
+        'monedas_plateada': '../levels/level_0/level_0._moneda_plateada.csv',
         }
 
 level_1 = {
-        'terreno': '../levels/level_1/level_1._terreno.csv',
-        'lava': '../levels/level_1/level_1._lava.csv',
-        'monedas': '../levels/level_1/level_1._monedas.csv',
-        'player': '../levels/level_1/level_1._player.csv',
-        'enemigo': '../levels/level_1/level_1._enemigo.csv',
+        'terreno': '../levels/level_1/lv1_terreno.csv',
+        'lavax': '../levels/level_1/lv1_lava.csv',
+        'monedas': '../levels/level_1/lv1_monedas.csv',
+        'player': '../levels/level_1/lv1_player.csv',
+        'enemigo': '../levels/level_1/lv1_enemigo.csv',
+        'monedas_plateada': '../levels/level_1/lv1_monedas_plata.csv',
         }
 
 level_2 = {
-        'terreno': 'levels/level_1/level_1._terreno.csv',
-        'pinches': 'levels/level_1/lv2_pinches.csv',
-        'monedas': 'levels/level_1/lv2_monedas.csv',
-        'player': 'levels/level_1/lv2_player.csv',
-        'pinches': 'levels/level_1/level_1._lava.csv',
+        'terreno': '../levels/level_2/lv2_terreno.csv',
+        'pinches': '../levels/level_2/lv2_pinches.csv',
+        'monedas': '../levels/level_2/lv2_monedas.csv',
+        'player': '../levels/level_2/lv2_player.csv',
+        'enemigo': '../levels/level_2/lv2_enemigo.csv',
+        'monedas_plateada': '../levels/level_2/lv2_moneda_plateada.csv',
         }
 
 levels = {

@@ -25,6 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.a_la_izquierda = False
 
         self.cantidad_monedas = 0
+        self.vivo = True
 
     def importar_imagenes(self):
         imagenes_path = '../graficos/character/'
