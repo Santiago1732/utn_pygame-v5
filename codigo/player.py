@@ -9,6 +9,7 @@ class Player(pygame.sprite.Sprite):
         self.velocidad_animacion = 0.15
         self.image = self.animaciones['inactivo'][self.imagen_index]
         self.rect = self.image.get_rect(topleft=pos)
+        self.posicion_inicial = pos
 
         # movimiento player
         self.direction = pygame.math.Vector2(0, 0)
@@ -26,6 +27,8 @@ class Player(pygame.sprite.Sprite):
 
         self.cantidad_monedas = 0
         self.vivo = True
+        self.cantidad_vidas = 3
+
 
     def importar_imagenes(self):
         imagenes_path = '../graficos/character/'

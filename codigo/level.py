@@ -1,13 +1,14 @@
 import pygame
 
+from codigo import player
 from support import importar_csv_layout, importar_graficos
 from settings import tiles_tamaño
 from tiles import Tile, StaticTile
 from enemigo import Enemigo
 from player import Player
 from settings import *
+from UI import *
 from data_juego import levels
-
 
 # level_data: informacion real que nosotros creamos anteriormente en el tilemap
 # superficie: superficie de visualizacion de la ventana
@@ -16,16 +17,17 @@ class Level:
         self.superficie_visualizacion = superficie
         self.mundo_shift = 0
         self.x_actual = None
-
         # PL AYER
         mapa_player = importar_csv_layout(level_data['player'])
         self.player = pygame.sprite.GroupSingle()
         self.player_setup(mapa_player)
-
         self.goal = pygame.sprite.GroupSingle()
-        self.player_setup(mapa_player)
         self.cambia_level = False
         self.level_actual = level_actual
+        self.movio_pantalla = False
+        self.ui = UI(superficie)
+        self.cambiar_monedas = 0
+        self.vivo = True
 
         if self.level_actual == 0:
             # LV 0
@@ -187,16 +189,45 @@ class Level:
         player = self.player.sprite
         player_x = player.rect.centerx
         direccion_x = player.direction.x
+        # print(player_x)
+        # print(direccion_x)
 
         if player_x < ancho_pantalla / 4 and direccion_x < 0:
             self.mundo_shift = 8
             player.speed = 0
         elif player_x > ancho_pantalla - (ancho_pantalla / 4) and direccion_x > 0:
+            self.movio_pantalla = True
             self.mundo_shift = -8
             player.speed = 0
         else:
             self.mundo_shift = 0
             player.speed = 8
+
+    def calcular_desplazamiento_inicial(self):
+        player = self.player.sprite
+        valor_inicial_sprite = player.posicion_inicial
+        return valor_inicial_sprite
+
+    def colission_terreno_hiriente_kava(self):
+        player = self.player.sprite
+        if pygame.sprite.spritecollide(player, self.lava_sprites, False):
+            player.cantidad_vidas -= 1
+            self.vivo = False
+            self.reiniciar_nivel()
+
+    def colission_terreno_hiriente_pinches(self):
+        player = self.player.sprite
+        if pygame.sprite.spritecollide(player, self.pinches_sprites, False):
+            player.cantidad_vidas -= 1
+            self.vivo = False
+            self.reiniciar_nivel()
+
+    def reiniciar_nivel(self):
+        player = self.player.sprite
+        self.terreno_sprites.draw(self.superficie_visualizacion)
+        self.terreno_sprites.update(self.mundo_shift)
+        self.player.sprite.rect.topleft = player.posicion_inicial
+
 
     def player_setup(self, layout):
         for fila_index, fila in enumerate(layout):
@@ -249,6 +280,7 @@ class Level:
                     player.direction.y = 0
                     player.en_el_techo = True
 
+
         if player.en_el_piso and player.direction.y < 0 or player.direction.y > 1:
             player.en_el_piso = False
         if player.en_el_techo and player.direction.y > 0:
@@ -259,12 +291,13 @@ class Level:
             if pygame.sprite.spritecollide(enemigo, self.terreno_sprites, False):
                 enemigo.reversa()
 
-    # def moneda_coliision(self):
-    #     colision_monedas = pygame.sprite.spritecollide(self.player.sprite, self.modenas_sprites, True)
-    #     contadorMonedas = 0
-    #     if colision_monedas:
-    #         contadorMonedas =+1
-    #     return contadorMonedas
+    def monedas_plateada_coliision(self):
+        player = self.player.sprite
+        colision_monedas = pygame.sprite.spritecollide(self.player.sprite, self.modenas_plateadas_sprites, True)
+        contadorMonedas = 0
+        if colision_monedas:
+            self.cambiar_monedas += 1
+            return 1
 
     def condicion_para_cambiar_de_nivel(self):
         retorno = False
@@ -272,6 +305,10 @@ class Level:
         if colision_monedas:
             retorno = True
             return retorno
+
+    def cambiar_monedas(self,cantidad):
+        self.ui.monedas_plateadas_contador += cantidad
+
 
     # def chequear_victoria(self):
     #     if pygame.sprite.spritecollide(self.player.sprite, self.goal, False):
@@ -307,9 +344,9 @@ class Level:
 
         # ENEMIGO
         self.enemigo_sprites.update(self.mundo_shift)
-        # self.reestricciones_sprites.update(self.mundo_shift)
         self.enemigo_colission_reversa()
         self.enemigo_sprites.draw(self.superficie_visualizacion)
+        # self.reestricciones_sprites.update(self.mundo_shift)
 
         # PLAYER
         self.player.update()
@@ -318,6 +355,15 @@ class Level:
         self.scroll_x()
         self.player.draw(self.superficie_visualizacion)
         self.cambia_level = self.condicion_para_cambiar_de_nivel()
+        self.monedas_plateada_coliision()
+        self.ui.mostrar_monedas(self.cambiar_monedas)
+
+        if hasattr(self, 'lava_sprites'):
+            self.colission_terreno_hiriente_kava()
+
+        if hasattr(self, 'pinches_sprites'):
+            self.colission_terreno_hiriente_pinches()
+
         # self.moneda_coliision()
         # self.chequear_victoria()
 
