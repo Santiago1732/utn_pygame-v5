@@ -28,6 +28,12 @@ class Level:
         self.ui = UI(superficie)
         self.cambiar_monedas = 0
         self.vivo = True
+        self.sonido_moneda = pygame.mixer.Sound('../sonido/level_0/moneda.mp3')
+        self.sonido_dolor = pygame.mixer.Sound('../sonido/level_0/dolor.mp3')
+        self.sonido_lv_up = pygame.mixer.Sound('../sonido/level_0/mu_online_level_up.mp3')
+        self.sonido_lv_0 = pygame.mixer.Sound('../sonido/level_0/lv_0_sonido_.wav')
+        self.sonido_lv_1 = pygame.mixer.Sound('../sonido/level_1/level_1.wav')
+        self.sonido_lv_2 = pygame.mixer.Sound('../sonido/level_0/lv-2.wav')
 
         if self.level_actual == 0:
             # LV 0
@@ -211,6 +217,7 @@ class Level:
     def colission_terreno_hiriente_kava(self):
         player = self.player.sprite
         if pygame.sprite.spritecollide(player, self.lava_sprites, False):
+            self.sonido_dolor.play()
             player.cantidad_vidas -= 1
             self.vivo = False
             self.reiniciar_nivel()
@@ -218,6 +225,7 @@ class Level:
     def colission_terreno_hiriente_pinches(self):
         player = self.player.sprite
         if pygame.sprite.spritecollide(player, self.pinches_sprites, False):
+            self.sonido_dolor.play()
             player.cantidad_vidas -= 1
             self.vivo = False
             self.reiniciar_nivel()
@@ -296,6 +304,7 @@ class Level:
         colision_monedas = pygame.sprite.spritecollide(self.player.sprite, self.modenas_plateadas_sprites, True)
         contadorMonedas = 0
         if colision_monedas:
+            self.sonido_moneda.play()
             self.cambiar_monedas += 1
             return 1
 
@@ -303,11 +312,27 @@ class Level:
         retorno = False
         colision_monedas = pygame.sprite.spritecollide(self.player.sprite, self.modenas_sprites, True)
         if colision_monedas:
+            self.sonido_lv_up.play()
             retorno = True
             return retorno
 
     def cambiar_monedas(self,cantidad):
         self.ui.monedas_plateadas_contador += cantidad
+
+    def reproducir_sonido(self, lv_actual):
+        match lv_actual:
+            case 0:
+                self.sonido_lv_1.stop()
+                self.sonido_lv_0.play()
+            case 1:
+                self.sonido_lv_1.play()
+                self.sonido_lv_0.stop()
+            case 2:
+                self.sonido_lv_0.stop()
+                self.sonido_lv_1.stop()
+                self.sonido_lv_2.play()
+
+
 
 
     # def chequear_victoria(self):
@@ -363,6 +388,7 @@ class Level:
 
         if hasattr(self, 'pinches_sprites'):
             self.colission_terreno_hiriente_pinches()
+
 
         # self.moneda_coliision()
         # self.chequear_victoria()

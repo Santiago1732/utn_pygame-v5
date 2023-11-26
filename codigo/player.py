@@ -28,6 +28,7 @@ class Player(pygame.sprite.Sprite):
         self.cantidad_monedas = 0
         self.vivo = True
         self.cantidad_vidas = 3
+        self.sonido_salto = pygame.mixer.Sound('../sonido/level_0/salto.mp3')
 
 
     def importar_imagenes(self):
@@ -83,6 +84,7 @@ class Player(pygame.sprite.Sprite):
             self.direction.x = 0
 
         if keys[pygame.K_UP] and self.en_el_piso:
+            self.sonido_salto.play()
             self.jump()
 
     # {'inactivo': [], 'saltando': [], 'corriendo': [], 'cayendo': []}
