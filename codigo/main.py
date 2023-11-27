@@ -15,10 +15,9 @@ nombre_jugador = None
 # level = Level(level_0,screen)
 # sonido_activado = True
 
-# menu = Menu()
-menu = main_menu()
+menu = main_menu(Menu)
 
-if menu.nombre_jugador is not None:
+if menu is not None:
     current_level_index = 0
     levels = [level_0, level_1, level_2]
     level = Level(levels[current_level_index], screen, current_level_index)

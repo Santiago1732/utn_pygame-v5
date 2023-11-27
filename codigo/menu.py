@@ -2,7 +2,7 @@ import pygame
 import sys
 
 class Menu():
-    def __init__(self, nombre_jugador,sonido_activado):
+    def __init__(self, nombre_jugador, sonido_activado):
         super().__init__()
         self.nombre_jugador = nombre_jugador
         self.sonido_activado = sonido_activado
@@ -24,7 +24,10 @@ BLACK = (0, 0, 0)
 font = pygame.font.Font(None, 36)
 
 # Funciones para cada pantalla
-def main_menu(sonido_activado = True):
+def main_menu(self):
+    menu = Menu('None',True)
+    sonido_activado = True
+    nombre_jugador = ''
     while True:
         screen.fill(WHITE)
         draw_text('Main Menu', font, BLACK, screen, 20, 20)
@@ -34,30 +37,29 @@ def main_menu(sonido_activado = True):
 
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_1:
-                    nombre_jugador = game_screen()
-                    if nombre_jugador is not None:
-                        menu = Menu(nombre_jugador,sonido_activado)
-                        # menu.nombre_jugador = nombre_jugador
-                        # menu.sonido_activado = sonido_activado
+                match event.key:
 
+                    # NOMBRE JUGADOR
+                    case pygame.K_1:
+                        menu.nombre_jugador = game_screen(sonido_activado)
                         return menu
 
-                elif event.key == pygame.K_2:
-                    options_screen()
-                elif event.key == pygame.K_3:
-                    pygame.quit()
-                    sys.exit()
+                    # OPCIONES
+                    case pygame.K_2:
+                        menu.sonido_activado = options_screen()
+
+                    # SALIR
+                    case pygame.K_3:
+                        pygame.quit()
+                        sys.exit()
 
         pygame.display.update()
 
 
-def game_screen():
+def game_screen(self, sonido_activado = True):
     running = True
     while running:
         screen.fill(WHITE)
-        draw_text('Game Screen', font, BLACK, screen, 20, 20)
-        draw_text('Ingrese su nombre:', font, BLACK, screen, 20, 100)
         player_name = text_input()
 
         if player_name is not None:
@@ -66,13 +68,15 @@ def game_screen():
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    game_screen()
+                    self.nombre_jugador = game_screen(sonido_activado)
                     pygame.display.update()
 
+
+sonido_activado = True
 def options_screen():
-    running = True
-    sonido_activado = True
-    while running:
+    global sonido_activado  # Usar la variable global
+
+    while True:
         screen.fill(WHITE)
         draw_text(' - OPCIONES- ', font, BLACK, screen, 20, 20)
         draw_text('2) Atras', font, BLACK, screen, 20, 140)
@@ -84,22 +88,10 @@ def options_screen():
 
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
-                # ACTIVAR SONIDO
-                if sonido_activado and event.key == pygame.K_1:
-                    sonido_activado = False
-                    break
-
-                # DESACTIVAR SONIDO
-                if not sonido_activado and event.key == pygame.K_1:
-                    sonido_activado = True
-                    break
-                # VOLVER ATRAS
-                if event.key == pygame.K_2:
-                    main_menu(sonido_activado)
-
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                running = False
+                if event.key == pygame.K_1:
+                    sonido_activado = not sonido_activado
+                elif event.key == pygame.K_2:
+                    return sonido_activado
 
         pygame.display.update()
 
@@ -112,8 +104,8 @@ def text_input():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.K_ESCAPE:
-                main_menu()
+            # if event.type == pygame.K_ESCAPE:
+            #     main_menu()
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
