@@ -1,56 +1,63 @@
-import pygame, sys
+import codigo.bdd
 from settings import *
 from level import Level
-from data_juego import level_0, level_1, level_2, levels
-from interfaz import *
+from data_juego import level_0, level_1, level_2
 from UI import *
 from menu import *
+from bdd import crear_db, insertar_jugador
 
 pygame.init()
 pygame.mixer.init()
-pygame.mixer.music.set_volume(1.0)
 screen = pygame.display.set_mode((ancho_pantalla, altura_pantalla))
 clock = pygame.time.Clock()
 nombre_jugador = None
 # level = Level(level_0,screen)
 # sonido_activado = True
-
 menu = main_menu(Menu)
 
 if menu is not None:
+
+    crear_db()
     current_level_index = 0
+
     levels = [level_0, level_1, level_2]
     level = Level(levels[current_level_index], screen, current_level_index)
     ui = UI(screen)
-    level.reproducir_sonido(current_level_index)
+
+    if menu.sonido_activado:
+        level.reproducir_sonido(current_level_index)
 
     while True:
         if not level.vivo:
-            level.reproducir_sonido(current_level_index-1)
-
-            match current_level_index:
-                case 0: level.sonido_lv_0.stop()
-                case 1: level.sonido_lv_1.stop()
-                case 2: level.sonido_lv_2.stop()
-
             current_level_index -= 1
             level.vivo = True
 
             level = Level(levels[current_level_index], screen, current_level_index)
             level.cambia_level = False
-            level.reproducir_sonido(current_level_index)
 
         if level.cambia_level:
+
+            level.apagar_sonido(current_level_index)
+
             current_level_index += 1
-            level.reproducir_sonido(current_level_index)
             if current_level_index >= len(levels):
-                current_level_index = 0  # Vuelve al primer nivel o termina el juego
+                current_level_index = 0
+
+            if menu.sonido_activado:
+                level.reproducir_sonido(current_level_index)
 
             level = Level(levels[current_level_index], screen,current_level_index)
             level.cambia_level = False
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                tiempo_transcurrido = pygame.time.get_ticks()
+                tiempo_en_segundos = tiempo_transcurrido / 1000
+                tiempo_en_minutos = tiempo_en_segundos / 60
+
+                tiempo_total = f"{tiempo_en_minutos}:,{tiempo_en_segundos}"
+
+                insertar_jugador(menu.nombre_jugador,current_level_index,tiempo_total)
                 pygame.quit()
                 sys.exit()
 

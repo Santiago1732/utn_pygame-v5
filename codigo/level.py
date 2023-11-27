@@ -1,5 +1,6 @@
 import pygame
 
+from pygame import *
 from codigo import player
 from support import importar_csv_layout, importar_graficos
 from settings import tiles_tamaño
@@ -32,8 +33,8 @@ class Level:
         self.sonido_dolor = pygame.mixer.Sound('../sonido/level_0/dolor.mp3')
         self.sonido_lv_up = pygame.mixer.Sound('../sonido/level_0/mu_online_level_up.mp3')
         self.sonido_lv_0 = pygame.mixer.Sound('../sonido/level_0/lv_0_sonido_.wav')
-        self.sonido_lv_1 = pygame.mixer.Sound('../sonido/level_1/level_1.wav')
-        self.sonido_lv_2 = pygame.mixer.Sound('../sonido/level_0/lv-2.wav')
+        self.sonido_lv_1 = pygame.mixer.Sound('../sonido/level_0/lv_0_sonido_.wav')
+        self.sonido_lv_2 = pygame.mixer.Sound('../sonido/level_0/lv_0_sonido_.wav')
 
         if self.level_actual == 0:
             # LV 0
@@ -322,15 +323,22 @@ class Level:
     def reproducir_sonido(self, lv_actual):
         match lv_actual:
             case 0:
-                self.sonido_lv_1.stop()
                 self.sonido_lv_0.play()
             case 1:
                 self.sonido_lv_1.play()
-                self.sonido_lv_0.stop()
             case 2:
-                self.sonido_lv_0.stop()
-                self.sonido_lv_1.stop()
                 self.sonido_lv_2.play()
+
+    def apagar_sonido(self, lv_actual):
+        match lv_actual:
+            case 0:
+                self.sonido_lv_0.stop()
+            case 1:
+                self.sonido_lv_1.stop()
+                # mixer.pause()
+            case 2:
+                self.sonido_lv_2.stop()
+
 
 
 
